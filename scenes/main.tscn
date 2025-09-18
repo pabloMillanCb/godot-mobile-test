@@ -1,0 +1,188 @@
+[gd_scene load_steps=12 format=3 uid="uid://bvg1tck0moh2q"]
+
+[ext_resource type="PackedScene" uid="uid://dluodvk8egbqt" path="res://scenes/player/Player.tscn" id="1_d3utg"]
+[ext_resource type="FontFile" uid="uid://btmce4ettwlht" path="res://assets/upheavtt.ttf" id="2_mx6kn"]
+[ext_resource type="PackedScene" uid="uid://cixecxr0ua04x" path="res://scenes/enemy/Enemy.tscn" id="3_qxj71"]
+[ext_resource type="PackedScene" uid="uid://cw5e22bxb0drr" path="res://scenes/background/background.tscn" id="4_3swgj"]
+
+[sub_resource type="GDScript" id="GDScript_54mt2"]
+script/source = "extends Node2D
+
+var points = 0
+var gameover = false
+
+func _ready():
+	GlobalSignals.enemy_dead.connect(func (): 
+		points += 1
+		$CanvasLayer/Points.text = str(points)
+		$AnimationPlayer.stop()
+		$AnimationPlayer.play(\"show_points\"))
+		
+	GlobalSignals.player_dead.connect(func (): 
+		$AnimationPlayer.play(\"final points\")
+		gameover = true
+		)
+
+
+func _input(event):
+	if Input.is_action_just_pressed(\"action\") and gameover:
+		get_tree().reload_current_scene()
+
+func spawn_mob():
+	var new_mob = preload(\"res://scenes/enemy/Enemy.tscn\").instantiate()
+	%PathFollow2D.progress_ratio = randf()
+	new_mob.global_position = %PathFollow2D.global_position
+	add_child(new_mob)
+	print(\"spawn\")
+	$SpawnTimer.wait_time = max(0.5, $SpawnTimer.wait_time - 0.02)
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_00ujt"]
+font = ExtResource("2_mx6kn")
+font_size = 100
+
+[sub_resource type="Curve2D" id="Curve2D_vgx0n"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -598, -458, 0, 0, 0, 0, -595, 528, 0, 0, 0, 0, 568, 537, 0, 0, 0, 0, 541, -488, 0, 0, 0, 0, -598, -479)
+}
+point_count = 5
+
+[sub_resource type="Animation" id="Animation_wiinp"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CanvasLayer/Points:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CanvasLayer/Points2:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_jou0s"]
+resource_name = "final points"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CanvasLayer/Points:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 0.529412, 0.639216)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CanvasLayer/Points2:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 0.529412, 0.639216)]
+}
+
+[sub_resource type="Animation" id="Animation_egnxy"]
+resource_name = "show_points"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CanvasLayer/Points:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.9, 1.23333),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 0.529412, 0.701961), Color(1, 1, 0.529412, 0.640921), Color(1, 1, 0.529412, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_5744o"]
+_data = {
+"RESET": SubResource("Animation_wiinp"),
+"final points": SubResource("Animation_jou0s"),
+"show_points": SubResource("Animation_egnxy")
+}
+
+[node name="Main" type="Node2D"]
+script = SubResource("GDScript_54mt2")
+
+[node name="Background" parent="." instance=ExtResource("4_3swgj")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Points" type="Label" parent="CanvasLayer"]
+modulate = Color(1, 1, 1, 0)
+offset_left = -109.0
+offset_top = -215.0
+offset_right = 641.0
+offset_bottom = 331.0
+text = "0"
+label_settings = SubResource("LabelSettings_00ujt")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Points2" type="Label" parent="CanvasLayer"]
+modulate = Color(1, 1, 1, 0)
+offset_left = -110.0
+offset_top = -32.0
+offset_right = 640.0
+offset_bottom = 514.0
+text = "AGAIN?"
+label_settings = SubResource("LabelSettings_00ujt")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player" parent="." instance=ExtResource("1_d3utg")]
+z_index = 0
+
+[node name="Path2D" type="Path2D" parent="Player"]
+curve = SubResource("Curve2D_vgx0n")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Player/Path2D"]
+unique_name_in_owner = true
+position = Vector2(-598, -458)
+rotation = 1.56775
+
+[node name="SpawnTimer" type="Timer" parent="."]
+wait_time = 3.0
+autostart = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_5744o")
+}
+
+[node name="Enemy" parent="." instance=ExtResource("3_qxj71")]
+position = Vector2(-602, 484)
+
+[node name="Enemy2" parent="." instance=ExtResource("3_qxj71")]
+position = Vector2(352, 346)
+
+[node name="Enemy3" parent="." instance=ExtResource("3_qxj71")]
+position = Vector2(504, -452)
+
+[node name="Enemy4" parent="." instance=ExtResource("3_qxj71")]
+position = Vector2(-366, -340)
+
+[connection signal="timeout" from="SpawnTimer" to="." method="spawn_mob"]

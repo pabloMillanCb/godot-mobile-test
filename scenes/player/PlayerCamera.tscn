@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://dj3bi7c12kc6l"]
+
+[ext_resource type="Script" path="res://scenes/player/player_camera.gd" id="1_f31oc"]
+
+[node name="CameraPlayer" type="CharacterBody2D"]
+light_mask = 0
+script = ExtResource("1_f31oc")
+
+[node name="Camera" type="Camera2D" parent="."]
+
+[node name="StopFollowingTimer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true

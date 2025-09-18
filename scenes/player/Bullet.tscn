@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://m0sbvsdl24t1"]
+
+[ext_resource type="Script" path="res://scenes/player/bullet.gd" id="1_olw5o"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_swp1d"]
+radius = 14.0357
+
+[node name="Bullet" type="StaticBody2D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("1_olw5o")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -11.0
+offset_top = -10.0
+offset_right = 11.0
+offset_bottom = 10.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_swp1d")
+
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+light_mask = 2
+visibility_layer = 4
+scale = Vector2(1, 0.65)
+
+[connection signal="screen_exited" from="VisibleOnScreenEnabler2D" to="." method="_on_visible_on_screen_enabler_2d_screen_exited"]

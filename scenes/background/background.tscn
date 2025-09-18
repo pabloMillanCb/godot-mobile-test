@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://cw5e22bxb0drr"]
+
+[ext_resource type="Texture2D" uid="uid://bbtacoi0vpeuj" path="res://scenes/background/background_big.png" id="1_lvb31"]
+
+[node name="Background" type="Node2D"]
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+scroll_offset = Vector2(1, 1)
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2(1000, 1000)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
+position = Vector2(256, 224)
+texture = ExtResource("1_lvb31")
